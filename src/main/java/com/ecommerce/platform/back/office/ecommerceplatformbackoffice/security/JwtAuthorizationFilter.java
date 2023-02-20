@@ -1,8 +1,12 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.security;
 
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity.Role;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.enums.RoleEnum;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Profile("dev")
@@ -53,9 +59,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return null;
             }
             String user = jwtTokenProvider.getUsername(token);
+            List<GrantedAuthority> authorities = jwtTokenProvider.getRoles(token)
+                    .stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
             if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(user, null, authorities);
             }
             return null;
         }
