@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "back_office_user",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"username"})
+                @UniqueConstraint(columnNames = {"bo_username"})
         })
 @Data
 @ToString(exclude = {"roles"})
@@ -22,10 +22,10 @@ public class BackOfficeUser {
         @SequenceGenerator(name = "back_office_user_id_seq", sequenceName = "back_office_user_id_seq", allocationSize = 1)
         private Integer id;
 
-        @Column(name = "username")
+        @Column(name = "bo_username")
         private String username;
 
-        @Column(name = "password")
+        @Column(name = "bo_password")
         private String password;
 
         @ManyToMany(fetch = FetchType.EAGER)
