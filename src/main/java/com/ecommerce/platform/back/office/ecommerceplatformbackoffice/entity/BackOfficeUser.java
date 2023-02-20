@@ -1,4 +1,4 @@
-package com.ecommerce.platform.back.office.ecommerceplatformbackoffice;
+package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
