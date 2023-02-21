@@ -5,5 +5,5 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto.Custom
 import java.util.List;
 
 public interface ICustomerService {
-    List<CustomerDto> getAllCustomers(Integer page, Integer pageSize) throws Exception;
+    List<CustomerDto> searchCustomers(String search, Integer page, Integer pageSize) throws Exception;
 }

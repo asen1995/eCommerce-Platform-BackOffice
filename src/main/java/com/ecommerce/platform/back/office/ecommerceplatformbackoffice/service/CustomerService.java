@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -23,14 +24,19 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public List<CustomerDto> getAllCustomers(Integer page, Integer pageSize) throws Exception {
+    public List<CustomerDto> searchCustomers(String search, Integer page, Integer pageSize) throws Exception {
 
-
-        final String path = "/v1/customers?page=" + page + "&pageSize=" + pageSize;
+        String url = UriComponentsBuilder.fromUriString(productOrderServiceUrl)
+                .path("/v1/customers")
+                .queryParam("search", search)
+                .queryParam("page", page)
+                .queryParam("pageSize", pageSize)
+                .build()
+                .toUriString();
 
 
         ResponseEntity<List<CustomerDto>> productDtoResponseEntity =
-                restTemplate.exchange(productOrderServiceUrl + path,
+                restTemplate.exchange(url,
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<>() {
@@ -40,7 +46,8 @@ public class CustomerService implements ICustomerService {
             return productDtoResponseEntity.getBody();
         }
 
-        throw new CustomerExtractingException("Call to product-order-service failed", productDtoResponseEntity.getStatusCode().value());
+        throw new CustomerExtractingException("Failed to get customers from product-order-service. Status code: " + productDtoResponseEntity.getStatusCode().value(),
+                productDtoResponseEntity.getStatusCode().value());
 
     }
 }

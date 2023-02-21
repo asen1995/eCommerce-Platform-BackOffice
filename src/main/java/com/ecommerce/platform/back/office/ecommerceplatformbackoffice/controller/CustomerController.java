@@ -24,11 +24,12 @@ public class CustomerController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('CUSTOMER_MANAGER')")
-    public ResponseEntity<List<CustomerDto>> getAllCustomers(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    public ResponseEntity<List<CustomerDto>> searchCustomers(@RequestParam(value = "search") String search,
+                                                             @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) throws Exception {
 
 
-        List<CustomerDto> customersResponse = customerService.getAllCustomers(page, pageSize);
+        List<CustomerDto> customersResponse = customerService.searchCustomers(search,page, pageSize);
 
         return new ResponseEntity<>(customersResponse, HttpStatus.OK);
     }
