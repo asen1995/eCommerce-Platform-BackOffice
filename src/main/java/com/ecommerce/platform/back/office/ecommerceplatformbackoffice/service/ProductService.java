@@ -1,7 +1,9 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.service;
 
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.constants.AppConstants;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto.ProductDto;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.excel.ExcelReader;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileFormatNotSupportedException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileProductsSaveException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.response.ProductsUploadResponse;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -25,7 +27,11 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ProductsUploadResponse createProductsFromFile(MultipartFile file) throws FileUploadException {
+    public ProductsUploadResponse createProductsFromFile(MultipartFile file) throws Exception {
+
+        if (!file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLSX) && !file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLS)) {
+            throw new FileFormatNotSupportedException(AppConstants.FILE_FORMAT_NOT_SUPPORTED);
+        }
 
         try {
             List<ProductDto> products = ExcelReader.extractProductDtos(file);

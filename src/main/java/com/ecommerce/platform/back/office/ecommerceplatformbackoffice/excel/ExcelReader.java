@@ -30,14 +30,23 @@ public class ExcelReader {
             String description = row.getCell(2).getStringCellValue();
             int quantity = (int) row.getCell(3).getNumericCellValue();
 
-            ProductDto productDto = new ProductDto();
-            productDto.setName(productName);
-            productDto.setCategory(category);
-            productDto.setDescription(description);
-            productDto.setQuantity(quantity);
-
-            products.add(productDto);
+            products.add(createProductDto(productName, category, description, quantity));
         }
+
+        if (products.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+
         return products;
+    }
+
+    private static ProductDto createProductDto(String productName, String category, String description, int quantity) {
+        ProductDto productDto = new ProductDto();
+        productDto.setName(productName);
+        productDto.setCategory(category);
+        productDto.setDescription(description);
+        productDto.setQuantity(quantity);
+
+        return productDto;
     }
 }
