@@ -8,6 +8,9 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.response.ProductsUploadResponse;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -29,6 +32,9 @@ public class ProductService implements IProductService {
     @Override
     public ProductsUploadResponse createProductsFromFile(MultipartFile file) throws Exception {
 
+        if(file.isEmpty())
+            throw new FileUploadException(AppConstants.FILE_EMPTY);
+
         if (!file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLSX) && !file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLS)) {
             throw new FileFormatNotSupportedException(AppConstants.FILE_FORMAT_NOT_SUPPORTED);
         }
@@ -37,9 +43,9 @@ public class ProductService implements IProductService {
             List<ProductDto> products = ExcelReader.extractProductDtos(file);
 
             ResponseEntity<List<ProductDto>> productDtoResponseEntity = restTemplate.exchange(productOrderServiceUrl + "/v1/products/add-many",
-                    org.springframework.http.HttpMethod.POST,
-                    new org.springframework.http.HttpEntity<>(products),
-                    new org.springframework.core.ParameterizedTypeReference<>() {
+                    HttpMethod.POST,
+                    new HttpEntity<>(products),
+                    new ParameterizedTypeReference<>() {
                     });
 
             if (productDtoResponseEntity.getStatusCode().is2xxSuccessful()) {
