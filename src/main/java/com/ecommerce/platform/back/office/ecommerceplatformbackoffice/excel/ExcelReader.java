@@ -30,7 +30,12 @@ public class ExcelReader {
             String description = row.getCell(2).getStringCellValue();
             int quantity = (int) row.getCell(3).getNumericCellValue();
 
-            ProductDto productDto = new ProductDto(productName, category, description, quantity);
+            ProductDto productDto = new ProductDto();
+            productDto.setName(productName);
+            productDto.setCategory(category);
+            productDto.setDescription(description);
+            productDto.setQuantity(quantity);
+
             products.add(productDto);
         }
         return products;
