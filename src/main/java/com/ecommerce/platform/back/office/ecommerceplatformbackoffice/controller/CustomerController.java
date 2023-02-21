@@ -25,7 +25,7 @@ public class CustomerController {
     @GetMapping
     @PreAuthorize("hasAuthority('CUSTOMER_MANAGER')")
     public ResponseEntity<List<CustomerDto>> getAllCustomers(@RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) {
+                                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) throws Exception {
 
 
         List<CustomerDto> customersResponse = customerService.getAllCustomers(page, pageSize);

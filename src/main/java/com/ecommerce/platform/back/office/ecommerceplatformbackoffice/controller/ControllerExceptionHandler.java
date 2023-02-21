@@ -1,5 +1,6 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.controller;
 
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.CustomerExtractingException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileProductsSaveException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.model.ErrorMessage;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -26,6 +27,11 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(FileProductsSaveException.class)
     public ResponseEntity<ErrorMessage> handleException(FileProductsSaveException e) {
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.valueOf(e.getStatusCode()));
+    }
+
+    @ExceptionHandler(CustomerExtractingException.class)
+    public ResponseEntity<ErrorMessage> handleException(CustomerExtractingException e) {
         return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.valueOf(e.getStatusCode()));
     }
 
