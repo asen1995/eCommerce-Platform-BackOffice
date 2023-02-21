@@ -23,7 +23,7 @@ public class CustomerController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('CUSTOMER_MANAGER')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'CUSTOMER_MANAGER')")
     public ResponseEntity<List<CustomerDto>> searchCustomers(@RequestParam(value = "search") String search,
                                                              @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) throws Exception {

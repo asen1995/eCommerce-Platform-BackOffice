@@ -4,6 +4,7 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.response.P
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.service.IProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ public class ProductController {
     }
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'IMPORT_MANAGER')")
     public ResponseEntity<ProductsUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
 
         ProductsUploadResponse productsUploadResponse = productService.createProductsFromFile(file);
