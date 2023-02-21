@@ -30,8 +30,11 @@ public class ProductService implements IProductService {
         try {
             List<ProductDto> products = ExcelReader.extractProductDtos(file);
 
-            ResponseEntity<ProductDto> productDtoResponseEntity = restTemplate.postForEntity(productOrderServiceUrl + "/v1/products/createall",
-                    products, ProductDto.class);
+            ResponseEntity<List<ProductDto>> productDtoResponseEntity = restTemplate.exchange(productOrderServiceUrl + "/v1/products/add-many",
+                    org.springframework.http.HttpMethod.POST,
+                    new org.springframework.http.HttpEntity<>(products),
+                    new org.springframework.core.ParameterizedTypeReference<>() {
+                    });
 
             if (productDtoResponseEntity.getStatusCode().is2xxSuccessful()) {
                 return new ProductsUploadResponse("Products saved successfully");
