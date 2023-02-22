@@ -1,6 +1,8 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.controller;
 
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.CustomerExtractingException;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileFormatNotSupportedException;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileNotContainProductsException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileProductsSaveException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.model.ErrorMessage;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -35,4 +37,13 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.valueOf(e.getStatusCode()));
     }
 
+    @ExceptionHandler(FileFormatNotSupportedException.class)
+    public ResponseEntity<ErrorMessage> handleException(FileFormatNotSupportedException e) {
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    @ExceptionHandler(FileNotContainProductsException.class)
+    public ResponseEntity<ErrorMessage> handleException(FileNotContainProductsException e) {
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.BAD_REQUEST);
+    }
 }
