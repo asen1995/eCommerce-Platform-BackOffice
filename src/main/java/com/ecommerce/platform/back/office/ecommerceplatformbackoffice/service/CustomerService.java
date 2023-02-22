@@ -4,8 +4,11 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto.Custom
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.CustomerExtractingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,11 +37,15 @@ public class CustomerService implements ICustomerService {
                 .build()
                 .toUriString();
 
+        String jwtToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
 
         ResponseEntity<List<CustomerDto>> productDtoResponseEntity =
                 restTemplate.exchange(url,
                         HttpMethod.GET,
-                        null,
+                        new HttpEntity<>(headers),
                         new ParameterizedTypeReference<>() {
                         });
 
