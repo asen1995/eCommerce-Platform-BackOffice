@@ -20,8 +20,6 @@ import java.util.List;
 public class Permission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "back_office_role_permission_id_seq")
-    @SequenceGenerator(name = "back_office_role_permission_id_seq", sequenceName = "back_office_role_permission_id_seq", allocationSize = 1)
     private Integer id;
 
     @Column(name = "permission_name")

@@ -1,6 +1,7 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.excel;
 
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto.ProductDto;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileNotContainProductsException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockMultipartFile;
@@ -17,14 +18,30 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExcelReaderTest {
 
     @Test
-    public void testLoadingExcelFileAndExtractingProducts() throws IOException {
+    public void testLoadingExcelFileAndExtractingProducts() throws Exception {
+
+        String filePath = "templates/back-office-products-template.xlsx";
+
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("templates/back-office-products-template.xlsx").getFile());
+        File file = new File(classLoader.getResource(filePath).getFile());
         FileInputStream inputStream = new FileInputStream(file);
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("templates/back-office-products-template.xlsx", inputStream);
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(filePath, inputStream);
 
         List<ProductDto> productDtos = ExcelReader.extractProductDtos(mockMultipartFile);
         assertNotNull(productDtos);
         assertEquals(8, productDtos.size());
+    }
+
+    @Test(expected = FileNotContainProductsException.class)
+    public void testLoadingExcelFileWithNoProducts() throws Exception {
+
+        String filePath = "templates/back-office-no-products-template.xlsx";
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource(filePath).getFile());
+        FileInputStream inputStream = new FileInputStream(file);
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(filePath, inputStream);
+
+        ExcelReader.extractProductDtos(mockMultipartFile);
     }
 }

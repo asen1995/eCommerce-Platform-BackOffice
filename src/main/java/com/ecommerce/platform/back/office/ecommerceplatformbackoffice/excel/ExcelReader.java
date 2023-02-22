@@ -1,19 +1,19 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.excel;
 
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto.ProductDto;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileNotContainProductsException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ExcelReader {
-    public static List<ProductDto> extractProductDtos(MultipartFile file) throws IOException {
+    public static List<ProductDto> extractProductDtos(MultipartFile file) throws Exception {
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         Iterator<Row> rowIterator = sheet.iterator();
@@ -34,7 +34,7 @@ public class ExcelReader {
         }
 
         if (products.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
+            throw new FileNotContainProductsException("File does not contain products");
         }
 
         return products;

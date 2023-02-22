@@ -19,8 +19,6 @@ import java.util.List;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "back_office_user_role_id_seq")
-    @SequenceGenerator(name = "back_office_user_role_id_seq", sequenceName = "back_office_user_role_id_seq", allocationSize = 1)
     private Integer id;
 
 

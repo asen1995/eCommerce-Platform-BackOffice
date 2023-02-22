@@ -18,8 +18,6 @@ import java.util.List;
 public class BackOfficeUser {
 
         @Id
-        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "back_office_user_id_seq")
-        @SequenceGenerator(name = "back_office_user_id_seq", sequenceName = "back_office_user_id_seq", allocationSize = 1)
         private Integer id;
 
         @Column(name = "bo_username")
