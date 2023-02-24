@@ -2,6 +2,8 @@ package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.service;
 
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto.CustomerDto;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.CustomerExtractingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -18,6 +20,8 @@ import java.util.List;
 @Service
 public class CustomerService implements ICustomerService {
 
+    private static final Logger logger = LogManager.getLogger(CustomerService.class);
+
     private final RestTemplate restTemplate;
     private final String productOrderServiceUrl;
 
@@ -28,6 +32,8 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public List<CustomerDto> searchCustomers(String search, Integer page, Integer pageSize) throws Exception {
+
+        logger.info("Searching customers with search: {}, page: {}, pageSize: {}", search, page, pageSize);
 
         String url = UriComponentsBuilder.fromUriString(productOrderServiceUrl)
                 .path("/v1/customers")
@@ -42,6 +48,9 @@ public class CustomerService implements ICustomerService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
+
+        logger.debug("Calling product-order-service with url: {}", url);
+
         ResponseEntity<List<CustomerDto>> productDtoResponseEntity =
                 restTemplate.exchange(url,
                         HttpMethod.GET,
@@ -50,8 +59,11 @@ public class CustomerService implements ICustomerService {
                         });
 
         if (productDtoResponseEntity.getStatusCode().is2xxSuccessful()) {
+            logger.info("Found {} customers", productDtoResponseEntity.getBody().size());
             return productDtoResponseEntity.getBody();
         }
+
+        logger.error("Failed to get customers from product-order-service. Status code: {}", productDtoResponseEntity.getStatusCode().value());
 
         throw new CustomerExtractingException("Failed to get customers from product-order-service. Status code: " + productDtoResponseEntity.getStatusCode().value(),
                 productDtoResponseEntity.getStatusCode().value());

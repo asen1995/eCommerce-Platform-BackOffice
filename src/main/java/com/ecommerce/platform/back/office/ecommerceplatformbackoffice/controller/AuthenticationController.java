@@ -3,6 +3,8 @@ package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.controlle
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.authentication.AuthenticationRequest;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.authentication.AuthenticationResponse;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.security.JwtTokenProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ import javax.validation.Valid;
 @Profile("dev")
 public class AuthenticationController {
 
+    private static final Logger logger = LogManager.getLogger(AuthenticationController.class);
+
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -37,6 +41,9 @@ public class AuthenticationController {
 
     @PostMapping
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthenticationRequest loginRequest) {
+
+        logger.info("Authenticating user: {}", loginRequest.getUsername());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -49,6 +56,8 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtTokenProvider.generateToken(userDetails);
+
+        logger.info("User {} authenticated successfully", loginRequest.getUsername());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }

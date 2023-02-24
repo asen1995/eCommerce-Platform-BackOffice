@@ -2,6 +2,8 @@ package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.security;
 
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity.Role;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.enums.RoleEnum;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,9 @@ import java.util.stream.Collectors;
 @Component
 @Profile("dev")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LogManager.getLogger(JwtAuthorizationFilter.class);
+
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -56,6 +61,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String token = request.getHeader(AUTHORIZATION_HEADER).replace(TOKEN_PREFIX, "");
 
             if(!jwtTokenProvider.validateToken(token) ){
+                logger.error("Invalid or expired jwt token");
                 return null;
             }
             String user = jwtTokenProvider.getUsername(token);

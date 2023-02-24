@@ -6,6 +6,8 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.excel.Exce
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileFormatNotSupportedException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileProductsSaveException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.response.ProductsUploadResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -23,6 +25,8 @@ import java.util.List;
 @Service
 public class ProductService implements IProductService {
 
+    private static final Logger logger = LogManager.getLogger(ProductService.class);
+
     private final RestTemplate restTemplate;
     private final String productOrderServiceUrl;
 
@@ -34,10 +38,13 @@ public class ProductService implements IProductService {
     @Override
     public ProductsUploadResponse createProductsFromFile(MultipartFile file) throws Exception {
 
-        if(file.isEmpty())
+        if (file.isEmpty()) {
+            logger.error("File is empty");
             throw new FileUploadException(AppConstants.FILE_EMPTY);
+        }
 
         if (!file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLSX) && !file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLS)) {
+            logger.error("File format {} not supported", file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1));
             throw new FileFormatNotSupportedException(AppConstants.FILE_FORMAT_NOT_SUPPORTED);
         }
         String jwtToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
@@ -55,14 +62,17 @@ public class ProductService implements IProductService {
                     });
 
             if (productDtoResponseEntity.getStatusCode().is2xxSuccessful()) {
+                logger.info("Products saved successfully");
                 return new ProductsUploadResponse("Products saved successfully");
             }
+
+            logger.error("Products not saved. Status code: {}", productDtoResponseEntity.getStatusCode().value());
 
             throw new FileProductsSaveException("Products not saved", productDtoResponseEntity.getStatusCode().value());
 
 
         } catch (Exception ex) {
-            System.out.println("Failed to upload file: " + ex.getMessage());
+            logger.error("Failed to upload file: {}", ex.getMessage());
             throw new FileUploadException("Failed to upload file: " + ex.getMessage());
         }
 
