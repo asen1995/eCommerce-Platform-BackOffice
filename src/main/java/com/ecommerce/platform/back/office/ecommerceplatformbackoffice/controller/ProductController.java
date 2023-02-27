@@ -2,6 +2,8 @@ package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.controlle
 
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.response.ProductsUploadResponse;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.service.IProductService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/v1/products")
 public class ProductController {
 
+    private static final Logger logger = LogManager.getLogger(ProductController.class);
     private final IProductService productService;
 
     public ProductController(IProductService productService) {
@@ -25,8 +28,11 @@ public class ProductController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'IMPORT_MANAGER')")
     public ResponseEntity<ProductsUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
 
+        logger.info("Uploading file: {}", file.getOriginalFilename());
+
         ProductsUploadResponse productsUploadResponse = productService.createProductsFromFile(file);
 
+        logger.info("Uploaded file finished successfully");
         return new ResponseEntity<>(productsUploadResponse, HttpStatus.CREATED);
     }
 
