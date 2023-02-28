@@ -4,7 +4,8 @@ public enum RoleEnum {
 
     SUPER_ADMIN("SUPER_ADMIN"),
     CUSTOMER_MANAGER("CUSTOMER_MANAGER"),
-    IMPORT_MANAGER("IMPORT_MANAGER");
+    IMPORT_MANAGER("IMPORT_MANAGER"),
+    ORDER_MANAGER("ORDER_MANAGER");
 
     private final String roleName;
 
