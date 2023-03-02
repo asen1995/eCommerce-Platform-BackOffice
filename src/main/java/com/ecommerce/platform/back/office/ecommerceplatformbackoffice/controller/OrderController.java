@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.ecommerce.platform.back.office.ecommerceplatformbackoffice.constants.AppConstants.TOPIC_NEW_ORDER;
+
 @RestController
 @RequestMapping("/v1/orders")
 public class OrderController {
@@ -28,7 +30,7 @@ public class OrderController {
 
 
     @MessageMapping("/process-new-order")
-    @SendTo("/topic/order")
+    @SendTo(TOPIC_NEW_ORDER)
     public String processNewOrder(String message) {
         return message;
     }

@@ -1,5 +1,6 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity;
 
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.enums.RoleEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -40,7 +41,11 @@ public class BackOfficeUser {
     private List<Role> roles;
 
 
-    public void listenForNewOrderTopicMessages(String topic, String url) {
+    public boolean isOrderManager() {
+        return getRoles().stream().anyMatch(role -> role.getRoleName() == RoleEnum.ORDER_MANAGER);
+    }
+
+    public void subscribeForNewOrderTopicMessages(String topic, String url) {
 
         WebSocketClient webSocketClient = new StandardWebSocketClient();
         WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
@@ -66,8 +71,7 @@ public class BackOfficeUser {
         try {
             stompClient.connect(url, sessionHandler).get();
         } catch (Exception e) {
-            logger.error("Error connecting to topic " + topic);
+            logger.warn("Error connecting to topic " + topic);
         }
     }
-
 }
