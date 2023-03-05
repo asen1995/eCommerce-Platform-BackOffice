@@ -1,10 +1,10 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.security;
 
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.constants.AppConstants;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity.BackOfficeUser;
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.enums.RoleEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -15,39 +15,40 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoggedInUsers {
 
     private static final Logger logger = LogManager.getLogger(LoggedInUsers.class);
+    private final String webSocketSelfUrl;
 
-
-    @Value("${back-office-websocket-service.url}")
-    private String backOfficeWebSocketUrl;
-
-    private final Map<String, BackOfficeUser> users = new ConcurrentHashMap<>();
+    private final Map<String, BackOfficeUser> loggedUsersMap = new ConcurrentHashMap<>();
+    
+    public LoggedInUsers(ServerProperties serverProperties) {
+        this.webSocketSelfUrl = String.format(AppConstants.WEBSOCKET_SERVER_SELF_URL_TEMPLATE, serverProperties.getPort());
+    }
 
     public void loginUser(BackOfficeUser backOfficeUser) {
-        if (isUserLoggedIn(backOfficeUser.getUsername())) return;
+        if (isUserAlreadyLoggedIn(backOfficeUser.getUsername())) return;
 
-        users.put(backOfficeUser.getUsername(), backOfficeUser);
+        loggedUsersMap.put(backOfficeUser.getUsername(), backOfficeUser);
         logger.info("User logged in: " + backOfficeUser.getUsername());
 
-        if (backOfficeUser.getRoles().stream().anyMatch(role -> role.getRoleName() == RoleEnum.ORDER_MANAGER)) {
+        if (backOfficeUser.isOrderManager()) {
             logger.info("User {} is an order manager, subscribing to order topic", backOfficeUser.getUsername());
-            backOfficeUser.listenForNewOrderTopicMessages("/topic/order", backOfficeWebSocketUrl);
+            backOfficeUser.subscribeForNewOrderTopicMessages(AppConstants.TOPIC_NEW_ORDER, webSocketSelfUrl);
             logger.info("User {} subscribed to order topic successfully", backOfficeUser.getUsername());
         }
     }
 
-    public void logoutUser(BackOfficeUser user) {
-        users.remove(user.getUsername());
-        logger.info("User logged out: " + user.getUsername());
+    public void logoutUser(String username) {
+        loggedUsersMap.remove(username);
+        logger.info("User logged out: {}", username);
     }
 
-    public boolean isUserLoggedIn(String username) {
-        return users.containsKey(username);
+    public boolean isUserAlreadyLoggedIn(String username) {
+        return loggedUsersMap.containsKey(username);
     }
 
     @PreDestroy
     public void cleanup() {
         logger.info("Cleaning up logged in users");
-        users.clear();
+        loggedUsersMap.clear();
     }
 }
 
