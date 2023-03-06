@@ -1,9 +1,6 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.controller;
 
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.CustomerExtractingException;
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileFormatNotSupportedException;
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileNotContainProductsException;
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileProductsSaveException;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.*;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.model.ErrorMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,5 +52,17 @@ public class ControllerExceptionHandler {
     public ResponseEntity<ErrorMessage> handleException(FileNotContainProductsException e) {
         logger.error("FileNotContainProductsException occurred with reason {}", e.getMessage());
         return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OrderExtractingException.class)
+    public ResponseEntity<ErrorMessage> handleException(OrderExtractingException e) {
+        logger.error("OrderExtractingException occurred with reason {}", e.getMessage());
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.valueOf(e.getStatusCode()));
+    }
+
+    @ExceptionHandler(OrderApprovingException.class)
+    public ResponseEntity<ErrorMessage> handleException(OrderApprovingException e) {
+        logger.error("OrderApprovingException occurred with reason {}", e.getMessage());
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage(), new Date()), HttpStatus.valueOf(e.getStatusCode()));
     }
 }
