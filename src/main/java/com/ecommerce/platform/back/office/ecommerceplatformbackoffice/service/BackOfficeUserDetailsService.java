@@ -4,6 +4,7 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity.Bac
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity.Role;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.enums.RoleEnum;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.repository.BackOfficeUserRepository;
+import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.security.LoggedInUsers;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +19,11 @@ import java.util.stream.Collectors;
 public class BackOfficeUserDetailsService implements UserDetailsService {
 
     private final BackOfficeUserRepository backOfficeUserRepository;
+    private final LoggedInUsers loggedInUsers;
 
-    public BackOfficeUserDetailsService(BackOfficeUserRepository backOfficeUserRepository) {
+    public BackOfficeUserDetailsService(BackOfficeUserRepository backOfficeUserRepository, LoggedInUsers loggedInUsers) {
         this.backOfficeUserRepository = backOfficeUserRepository;
+        this.loggedInUsers = loggedInUsers;
     }
 
 
@@ -35,6 +38,8 @@ public class BackOfficeUserDetailsService implements UserDetailsService {
                 .map(RoleEnum::getRoleName)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+
+        loggedInUsers.loginUser(user);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
