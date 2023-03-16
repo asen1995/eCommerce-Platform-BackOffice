@@ -1,28 +1,15 @@
-
-Docker containers setup:
-
-1.Oracle database example
-
-download open source oracle database from oracle container registry
+Docker setup
 
 
-https://container-registry.oracle.com/ords/f?p=113:4:18029637061400:::4:P4_REPOSITORY,AI_REPOSITORY,AI_REPOSITORY_NAME,P4_REPOSITORY_NAME,P4_EULA_ID,P4_BUSINESS_AREA_ID:803,803,Oracle%20Database%20Express%20Edition,Oracle%20Database%20Express%20Edition,1,0&cs=36mOR4cSDCi0CsSmQrfyV7xyjCjdlmQhdbv5zMrnB2XUHTWNqpQ6GiUpxE1znrw0z2o8jXUUeK-lqwr4r3BWl4A
-
+Run this command from root of the project to build image:
 
 ```console
-docker pull container-registry.oracle.com/database/express:latest
+docker build --build-arg VERSION=0.0.1-SNAPSHOT -t ecommerce-back-office-service-image .
 ```
 
-Start the oracle database container
 
-docker run --name <container name> \
--p <host port>:1521 -p <host port>:5500 \
--e ORACLE_PWD=<your database passwords> \
--e ORACLE_CHARACTERSET=<your character set> \
--v [<host mount point>:]/opt/oracle/oradata \
-container-registry.oracle.com/database/express:latest
-
+run image on container:
 
 ```console
-docker run --name back-office-service-oracle-database-container -p 1522:1521 -p 5502:5500 -e ORACLE_PWD=asen311 container-registry.oracle.com/database/express:latest
+docker run --name ecommerce-back-office-service -p 8087:8087 ecommerce-back-office-service-image
 ```
