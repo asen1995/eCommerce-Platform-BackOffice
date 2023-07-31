@@ -3,6 +3,8 @@ package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.constants
 public class AppConstants {
 
 
+    private AppConstants() {}
+
     public static final String FILE_FORMAT_XLSX = ".xlsx";
     public static final String FILE_FORMAT_XLS = ".xls";
 

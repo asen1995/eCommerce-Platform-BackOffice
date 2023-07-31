@@ -13,6 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ExcelReader {
+
+    private ExcelReader() {}
+
     public static List<ProductDto> extractProductDtos(MultipartFile file) throws Exception {
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
