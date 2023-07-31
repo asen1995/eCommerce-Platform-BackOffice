@@ -1,6 +1,5 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
