@@ -62,7 +62,7 @@ public class BackOfficeUser {
 
                     @Override
                     public void handleFrame(StompHeaders headers, Object payload) {
-                        logger.info("Hey " + username + ", a new order has been placed! : " + payload);
+                        logger.info(String.format("Hey %s, a new order has been placed! : %s", username, payload));
                     }
                 });
             }
