@@ -27,7 +27,7 @@ public class LoggedInUsers {
         if (isUserAlreadyLoggedIn(backOfficeUser.getUsername())) return;
 
         loggedUsersMap.put(backOfficeUser.getUsername(), backOfficeUser);
-        logger.info("User logged in: " + backOfficeUser.getUsername());
+        logger.info("User logged in: {}", backOfficeUser.getUsername());
 
         if (backOfficeUser.isOrderManager()) {
             logger.info("User {} is an order manager, subscribing to order topic", backOfficeUser.getUsername());
