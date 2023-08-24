@@ -1,7 +1,5 @@
 package com.ecommerce.platform.back.office.ecommerceplatformbackoffice.security;
 
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.entity.Role;
-import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.enums.RoleEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
@@ -18,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
