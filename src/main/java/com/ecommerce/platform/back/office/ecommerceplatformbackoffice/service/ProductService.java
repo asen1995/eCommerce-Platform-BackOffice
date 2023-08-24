@@ -6,6 +6,8 @@ import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.excel.Exce
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileFormatNotSupportedException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.exception.FileProductsSaveException;
 import com.ecommerce.platform.back.office.ecommerceplatformbackoffice.response.ProductsUploadResponse;
+import liquibase.util.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -41,6 +43,10 @@ public class ProductService implements IProductService {
         if (file.isEmpty()) {
             logger.error("File is empty");
             throw new FileUploadException(AppConstants.FILE_EMPTY);
+        }
+        if(StringUtils.isBlank(file.getOriginalFilename())) {
+            logger.error("File name is null");
+            throw new FileUploadException(AppConstants.FILE_NAME_NULL);
         }
 
         if (!file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLSX) && !file.getOriginalFilename().endsWith(AppConstants.FILE_FORMAT_XLS)) {
